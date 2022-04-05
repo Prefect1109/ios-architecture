@@ -87,9 +87,12 @@ final class SearchViewModel: ViewModelType {
             .do(onNext: { [weak self] result in
                 guard let strongSelf = self else { return }
                 switch result.type {
-                case .movies: strongSelf.dependencies.navigator.navigateToMovieDetailScreen(withMovieId: result.id,
+                case .movies:
+                    strongSelf.dependencies.navigator.navigateToMovieDetailScreen(withMovieId: result.id,
                                                                                             api: strongSelf.dependencies.api)
-                case .people: print("Not implemented.")
+                case .people:
+                    strongSelf.dependencies.navigator.navigateToPersonDetailScreen(withPersonId: result.id,
+                                                                                   api: strongSelf.dependencies.api)
                 }
                 
             })

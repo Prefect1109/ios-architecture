@@ -20,6 +20,6 @@ final class LoginNavigator {
     }
     
     func toMain() {
-        navigationController.dismiss(animated: true, completion: nil)
+        App.shared.showTabBarController()
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 
 protocol SearchNavigatable {
     func navigateToMovieDetailScreen(withMovieId id: Int, api: TMDBApiProvider)
+    func navigateToPersonDetailScreen(withPersonId id: Int, api: TMDBApiProvider)
 }
 
 final class SearchNavigator: SearchNavigatable {
@@ -28,5 +29,16 @@ final class SearchNavigator: SearchNavigatable {
         movieDetailViewController.viewModel = movieDetailViewModel
         
         navigationController.show(movieDetailViewController, sender: nil)
+    }
+    
+    func navigateToPersonDetailScreen(withPersonId id: Int, api: TMDBApiProvider) {
+        let personDetailNavigator = PersonDetailNavigator(navigationController: navigationController)
+        let personDetailViewModel = PersonDetailViewModel(dependencies: PersonDetailViewModel.Dependencies(id: id,
+                                                                                                          api: api,
+                                                                                                          navigator: personDetailNavigator))
+        let personDetailViewController = UIStoryboard.main.personDetailViewController
+        personDetailViewController.viewModel = personDetailViewModel
+        
+        navigationController.show(personDetailViewController, sender: nil)
     }
 }

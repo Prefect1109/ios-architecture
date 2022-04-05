@@ -1,29 +1,29 @@
 //
-//  MovieDetailViewModel.swift
+//  ShowDetailViewModel.swift
 //  tmdb-mvvm-pure
 //
-//  Created by krawiecp-home on 28/01/2019.
-//  Copyright © 2019 tailec. All rights reserved.
+//  Created by Prefect on 05.04.2022.
+//  Copyright © 2022 tailec. All rights reserved.
 //
 
 import RxSwift
 import RxCocoa
 
-final class MovieDetailViewModel: ViewModelType {
+class ShowDetailViewModel {
     struct Input {
         let ready: Driver<Void>
         let backTrigger: Driver<Void>
     }
     
     struct Output {
-        let data: Driver<MovieDetailData?> // nil means TMDB API errored out
+        let data: Driver<ShowDetailData?> // nil means TMDB API errored out
         let back: Driver<Void>
     }
     
     struct Dependencies {
         let id: Int
         let api: TMDBApiProvider
-        let navigator: MovieDetailNavigatable
+        let navigator: ShowDetailNavigator
     }
     
     private let dependencies: Dependencies
@@ -32,15 +32,15 @@ final class MovieDetailViewModel: ViewModelType {
         self.dependencies = dependencies
     }
     
-    func transform(input: MovieDetailViewModel.Input) -> MovieDetailViewModel.Output {
+    func transform(input: ShowDetailViewModel.Input) -> ShowDetailViewModel.Output {
         let data = input.ready
             .asObservable()
             .flatMap {_ in
-                self.dependencies.api.fetchMovieDetails(forMovieId: self.dependencies.id)
+                self.dependencies.api.fetchShowDetails(forShowId: self.dependencies.id)
             }
-            .map { movie -> MovieDetailData? in
-                guard let movie = movie else { return nil }
-                return MovieDetailData(movie: movie)
+            .map { showDetail -> ShowDetailData? in
+                guard let showDetail = showDetail else { return nil }
+                return ShowDetailData(showDetail: showDetail)
             }
             .asDriver(onErrorJustReturn: nil)
         
@@ -55,7 +55,7 @@ final class MovieDetailViewModel: ViewModelType {
     }
 }
 
-struct MovieDetailData {
+struct ShowDetailData {
     let title: String
     let releaseDate: String
     let overview: String
@@ -67,24 +67,25 @@ struct MovieDetailData {
     let status: String
 }
 
-extension MovieDetailData {
-    init(movie: Movie) {
-        self.title = movie.title
-        self.releaseDate = movie.releaseDate
-        self.overview = movie.overview
-        self.genres = movie.genres
+extension ShowDetailData {
+    init(showDetail: ShowDetail) {
+        self.title = showDetail.name
+        self.releaseDate = showDetail.releaseDate
+        self.overview = showDetail.overview
+        self.genres = showDetail.genres
             .flatMap {
                 $0.map { $0.name }
                     .prefix(2)
                     .joined(separator: ", ")
             } ?? ""
-        self.runtime = movie.runtime
-            .flatMap { "\($0 / 60)hr \($0 % 60)min" } ?? ""
-        self.voteAverage = movie.voteAverage
+        let episodeRunTimeInt = showDetail.episodeRunTime.reduce(0, +)
+        print(episodeRunTimeInt)
+        self.runtime = "\(episodeRunTimeInt / 60)hr \(episodeRunTimeInt % 60)min"
+        self.voteAverage = showDetail.voteAverage
             .flatMap { String($0) } ?? ""
-        self.posterUrl = movie.posterUrl.flatMap { "http://image.tmdb.org/t/p/w780/" + $0 }
-        self.voteCount = movie.voteCount
+        self.posterUrl = showDetail.posterUrl.flatMap { "http://image.tmdb.org/t/p/w780/" + $0 }
+        self.voteCount = showDetail.voteCount
             .flatMap { String($0) } ?? ""
-        self.status = movie.status ?? ""
+        self.status = showDetail.status ?? ""
     }
 }

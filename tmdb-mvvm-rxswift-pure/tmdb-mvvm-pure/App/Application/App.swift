@@ -11,7 +11,23 @@ import UIKit
 final class App {
     static let shared = App()
     
+    var navigationController = UINavigationController()
+    
     func startInterface(in window: UIWindow) {
+        let loginNavigationController = UINavigationController()
+        let loginNavigator = LoginNavigator(navigationController: loginNavigationController)
+        let loginViewModel = LoginViewModel(dependencies: LoginViewModel.Dependencies(api: TMDBApi(), navigator: loginNavigator))
+        let loginViewController = UIStoryboard.main.loginViewController
+        loginViewController.viewModel = loginViewModel
+        loginNavigationController.viewControllers = [loginViewController]
+        
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
+        
+        navigationController.pushViewController(loginViewController, animated: true)
+    }
+    
+    func showTabBarController() {
         let discoverNavigationController = UINavigationController()
         let discoverNavigator = DiscoverNavigator(navigationController: discoverNavigationController)
         let discoverViewModel = DiscoverViewModel(dependencies: DiscoverViewModel.Dependencies(api: TMDBApi(), navigator: discoverNavigator))
@@ -39,18 +55,7 @@ final class App {
             searchNavigationController
         ]
         
-        let loginNavigationController = UINavigationController()
-        let loginNavigator = LoginNavigator(navigationController: loginNavigationController)
-        let loginViewModel = LoginViewModel(dependencies: LoginViewModel.Dependencies(api: TMDBApi(), navigator: loginNavigator))
-        let loginViewController = UIStoryboard.main.loginViewController
-        loginViewController.viewModel = loginViewModel
-        loginNavigationController.viewControllers = [loginViewController]
-        
-        window.rootViewController = tabBarController
-        window.makeKeyAndVisible()
-        
-        // Not the nicest solution, if someone has any idea how to manage login/main screens, please let me know!
-        tabBarController.present(loginNavigationController, animated: true, completion: nil)
-
+        navigationController.popViewController(animated: false)
+        navigationController.pushViewController(tabBarController, animated: true)
     }
 }

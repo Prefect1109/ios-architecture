@@ -43,4 +43,8 @@ extension MovieDetailTipsView {
         configure(withVoteCount: data.voteCount,
                   status: data.status)
     }
+    func configure(with data: ShowDetailData) {
+        configure(withVoteCount: data.voteCount,
+                  status: data.status)
+    }
 }

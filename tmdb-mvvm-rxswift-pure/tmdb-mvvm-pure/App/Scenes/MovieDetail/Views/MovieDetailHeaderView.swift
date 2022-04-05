@@ -60,4 +60,12 @@ extension MovieDetailHeaderView {
                   voteAverage: data.voteAverage,
                   overview: data.overview)
     }
+    func configure(with data: ShowDetailData) {
+        configure(withTitle: data.title,
+                  releaseDate: data.releaseDate,
+                  genres: data.genres,
+                  runtime: data.runtime,
+                  voteAverage: data.voteAverage,
+                  overview: data.overview)
+    }
 }

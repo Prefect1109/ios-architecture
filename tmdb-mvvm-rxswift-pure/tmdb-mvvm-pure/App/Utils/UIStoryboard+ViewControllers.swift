@@ -36,6 +36,20 @@ extension UIStoryboard {
         return vc
     }
     
+    var personDetailViewController: PersonDetailViewController {
+        guard let vc = UIStoryboard.main.instantiateViewController(withIdentifier: "PersonDetailViewController") as? PersonDetailViewController else {
+            fatalError("PersonDetailViewController couldn't be found in Storyboard file")
+        }
+        return vc
+    }
+    
+    var showDetailViewController: ShowDetailViewController {
+        guard let vc = UIStoryboard.main.instantiateViewController(withIdentifier: "ShowDetailViewController") as? ShowDetailViewController else {
+            fatalError("PersonDetailViewController couldn't be found in Storyboard file")
+        }
+        return vc
+    }
+    
     var searchViewController: SearchViewController {
         guard let vc = UIStoryboard.main.instantiateViewController(withIdentifier: "SearchViewController") as? SearchViewController else {
             fatalError("SearchViewController couldn't be found in Storyboard file")

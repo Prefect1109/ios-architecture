@@ -10,8 +10,8 @@ import UIKit
 
 protocol DiscoverNavigatable {
     func navigateToMovieDetailScreen(withMovieId id: Int, api: TMDBApiProvider)
-    func navigateToPersonDetailScreen()
-    func navigateToShowDetailScreen()
+    func navigateToPersonDetailScreen(withPersonId id: Int, api: TMDBApiProvider)
+    func navigateToShowDetailScreen(withShowId id: Int, api: TMDBApiProvider)
 }
 
 final class DiscoverNavigator: DiscoverNavigatable {
@@ -32,11 +32,25 @@ final class DiscoverNavigator: DiscoverNavigatable {
         navigationController.show(movieDetailViewController, sender: nil)
     }
     
-    func navigateToPersonDetailScreen() {
+    func navigateToPersonDetailScreen(withPersonId id: Int, api: TMDBApiProvider) {
+        let personDetailNavigator = PersonDetailNavigator(navigationController: navigationController)
+        let personDetailViewModel = PersonDetailViewModel(dependencies: PersonDetailViewModel.Dependencies(id: id,
+                                                                                                          api: api,
+                                                                                                          navigator: personDetailNavigator))
+        let personDetailViewController = UIStoryboard.main.personDetailViewController
+        personDetailViewController.viewModel = personDetailViewModel
         
+        navigationController.show(personDetailViewController, sender: nil)
     }
     
-    func navigateToShowDetailScreen() {
+    func navigateToShowDetailScreen(withShowId id: Int, api: TMDBApiProvider) {
+        let showDetailNavigator = ShowDetailNavigator(navigationController: navigationController)
+        let showDetailViewModel = ShowDetailViewModel(dependencies: ShowDetailViewModel.Dependencies(id: id,
+                                                                                                  api: api,
+                                                                                                  navigator: showDetailNavigator))
+        let showDetailViewController = UIStoryboard.main.showDetailViewController
+        showDetailViewController.viewModel = showDetailViewModel
         
+        navigationController.show(showDetailViewController, sender: nil)
     }
 }
