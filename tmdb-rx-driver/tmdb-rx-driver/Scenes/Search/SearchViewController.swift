@@ -11,7 +11,6 @@ import RxSwift
 
 final class SearchViewController: DisposeViewController {
     @IBOutlet private(set) var searchTextField: UITextField!
-    @IBOutlet private(set) var segmentedControl: UISegmentedControl!
     @IBOutlet private(set) var tableView: UITableView!
 }
 

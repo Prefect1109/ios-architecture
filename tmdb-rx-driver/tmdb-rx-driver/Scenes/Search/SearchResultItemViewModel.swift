@@ -7,16 +7,11 @@
 
 import Foundation
 
-enum SearchResultItemType: Int {
-    case movies, people
-}
-
 struct SearchResultItem {
     let id: Int
     let title: String
     let subtitle: String
     let imageUrl: String?
-    let type: SearchResultItemType
 }
 
 extension SearchResultItem {
@@ -25,7 +20,6 @@ extension SearchResultItem {
         self.title = movie.title
         self.subtitle = movie.overview
         self.imageUrl = movie.posterUrl.flatMap { "http://image.tmdb.org/t/p/w185/"  + $0 }
-        self.type = .movies
     }
     
     init(person: Person) {
@@ -33,6 +27,12 @@ extension SearchResultItem {
         self.title = person.name
         self.subtitle = person.knownForTitles?.first ?? " "
         self.imageUrl = person.profileUrl.flatMap { "http://image.tmdb.org/t/p/w185/"  + $0 }
-        self.type = .people
+    }
+    
+    init() {
+        self.id = 0
+        self.title = ""
+        self.subtitle = ""
+        self.imageUrl = ""
     }
 }

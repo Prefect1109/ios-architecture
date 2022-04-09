@@ -44,3 +44,12 @@ struct Person: Decodable {
         knownForTitles = titles
     }
 }
+
+extension Person {
+    init(searchResult: SearchResult) {
+        self.id = searchResult.id
+        self.name = searchResult.name ?? ""
+        self.profileUrl = searchResult.profileUrl
+        self.knownForTitles = searchResult.knownForTitles
+    }
+}

@@ -15,6 +15,10 @@ protocol TMDBApiMoviesProvider {
     func searchMovies(forQuery query: String) -> Observable<[Movie]?>
 }
 
+protocol TMDBApiSearchProvider {
+    func search(forQuery query: String) -> Observable<MultiSearchResponse?>
+}
+
 protocol TMDBApiPeopleProvider {
     func fetchPopularPeople() -> Observable<[Person]?>
     func searchPeople(forQuery query: String) -> Observable<[Person]?>
@@ -28,7 +32,7 @@ protocol TMDBApiAuthProvider {
     func login(withUsername username: String, password: String) -> Observable<Bool>
 }
 
-protocol TMDBApiProvider: TMDBApiMoviesProvider, TMDBApiPeopleProvider, TMDBApiShowsProvider, TMDBApiAuthProvider { }
+protocol TMDBApiProvider: TMDBApiMoviesProvider, TMDBApiPeopleProvider, TMDBApiShowsProvider, TMDBApiAuthProvider, TMDBApiSearchProvider { }
 
 final class TMDBApi: TMDBApiProvider {
     private struct Constants {
@@ -106,6 +110,18 @@ final class TMDBApi: TMDBApiProvider {
                 }
                 return response.results
         }
+    }
+    
+    func search(forQuery query: String) -> Observable<MultiSearchResponse?> {
+        return httpClient.get(url: "https://api.themoviedb.org/3/search/multi?api_key=\(Constants.apiKey)&language=en-US&query=\(query)&page=1&include_adult=false")
+            .map { data -> MultiSearchResponse? in
+                guard let data = data,
+                    let response = try? JSONDecoder().decode(MultiSearchResponse.self, from: data) else {
+                        return nil
+                }
+                
+                return response
+            }
     }
     
     func login(withUsername username: String, password: String) -> Observable<Bool> {

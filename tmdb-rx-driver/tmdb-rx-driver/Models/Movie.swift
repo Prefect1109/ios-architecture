@@ -33,3 +33,18 @@ struct Movie: Decodable {
         case status
     }
 }
+
+extension Movie {
+    init(searchResult: SearchResult) {
+        self.id = searchResult.id
+        self.title = searchResult.title ?? ""
+        self.overview = searchResult.overview ?? ""
+        self.genres = nil
+        self.posterUrl = searchResult.posterUrl
+        self.releaseDate = searchResult.releaseDate ?? ""
+        self.runtime = nil
+        self.voteAverage = nil
+        self.voteCount = nil
+        self.status = nil
+    }
+}

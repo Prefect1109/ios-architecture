@@ -17,7 +17,6 @@ protocol SearchDriving {
     var didSelect: Driver<SearchResultItem> { get }
     
     func search(_ query: String)
-    func selectCategory(_ category: SearchResultItemType)
     func select(_ model: SearchResultItem)
 }
 
@@ -29,7 +28,6 @@ final class SearchDriver: SearchDriving {
     private let didSelectRelay = BehaviorRelay<SearchResultItem?>(value: nil)
     
     private var searchBag = DisposeBag()
-    private var selectedCategory: SearchResultItemType = .movies
 
     private let api: TMDBApiProvider
     
@@ -53,30 +51,27 @@ final class SearchDriver: SearchDriving {
             resultsRelay.accept([])
             return
         }
-
-        let searchResult: Observable<[SearchResultItem]>
         
-        switch selectedCategory {
-        case .movies:
-            searchResult = api.searchMovies(forQuery: query)
-                .map({ $0 ?? [] })
-                .mapMany(SearchResultItem.init)
-            
-        case .people:
-            searchResult = api.searchPeople(forQuery: query)
-                .map({ $0 ?? [] })
-                .mapMany(SearchResultItem.init)
-        }
+        let searchResult = api.search(forQuery: query)
+            .compactMap({ $0?.results })
+            .mapMany { item -> SearchResultItem? in
+                switch item.mediaType {
+                case .movie:
+                    let movie = Movie.init(searchResult: item)
+                    return .init(movie: movie)
+                case .person:
+                    let person = Person.init(searchResult: item)
+                    return .init(person: person)
+                case .tv:
+                    return nil
+                }
+            }.compactMap { $0.compactMap { $0 } }
         
         searchResult
             .trackActivity(activityIndicator)
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .bind(onNext: resultsRelay.accept)
             .disposed(by: searchBag)
-    }
-    
-    func selectCategory(_ category: SearchResultItemType) {
-        selectedCategory = category
     }
     
     func select(_ model: SearchResultItem) {

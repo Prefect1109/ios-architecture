@@ -51,8 +51,6 @@ final class SearchStateBinder: ViewControllerBinder {
         viewController.bag.insert(
             viewController.rx.viewWillAppear
                 .bind(onNext: unowned(self, in: SearchStateBinder.viewWillAppear)),
-            driver.isSwitchHidden
-                .drive(viewController.segmentedControl.rx.isHidden),
             driver.isLoading
                 .drive(UIApplication.shared.rx.isNetworkActivityIndicatorVisible),
             section.drive(viewController.tableView.rx.items(dataSource: dataSource))
